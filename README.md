@@ -1,6 +1,8 @@
 # QR Code Label — GLPI Plugin
 
-[![GLPI Version](https://img.shields.io/badge/GLPI-10.0%20%7C%2011.0-blue)](https://glpi-project.org/)
+> **This is a fork** of [tienou/glpi-qrcodelabel](https://github.com/tienou/glpi-qrcodelabel) with GLPI 12 compatibility and Chinese font support. See [FORK_NOTES.md](FORK_NOTES.md) for local changes.
+
+[![GLPI Version](https://img.shields.io/badge/GLPI-10.0%20%7C%2011.0%20%7C%2012.0-blue)](https://glpi-project.org/)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%E2%80%938.4-8892BF)](https://php.net/)
 [![License](https://img.shields.io/badge/License-AGPL%20v3-green)](LICENSE)
 
