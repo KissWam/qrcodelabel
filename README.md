@@ -1,236 +1,111 @@
-# QR Code Label — GLPI Plugin
+# QR Code Label — GLPI 插件（本地增强 Fork）
 
-> **This is a fork** of [tienou/glpi-qrcodelabel](https://github.com/tienou/glpi-qrcodelabel) with GLPI 12 compatibility and Chinese font support. See [FORK_NOTES.md](FORK_NOTES.md) for local changes.
+本仓库 Fork 自 [tienou/glpi-qrcodelabel](https://github.com/tienou/glpi-qrcodelabel)（原作者 Etienne Gaillard，AGPL-3.0），在本地做了**大量二次开发**。上游最后版本为 v1.5.1、仅支持 GLPI 10/11；本 Fork 已迭代至 **v1.8.2**，重点新增 GLPI 12 支持、中文标签打印与可配置标签内容。
 
-[![GLPI Version](https://img.shields.io/badge/GLPI-10.0%20%7C%2011.0%20%7C%2012.0-blue)](https://glpi-project.org/)
-[![PHP Version](https://img.shields.io/badge/PHP-7.4%E2%80%938.4-8892BF)](https://php.net/)
+> 上游原始功能说明保留在 [UPSTREAM.md](UPSTREAM.md) 供追溯。本 README 只讲本 Fork 二次开发后的能力与使用。
+
+[![GLPI Version](https://img.shields.io/badge/GLPI-10.x%20%7C%2011.x%20%7C%2012.x-blue)](https://glpi-project.org/)
 [![License](https://img.shields.io/badge/License-AGPL%20v3-green)](LICENSE)
 
-Generate rich inventory labels with QR codes directly from GLPI. Designed for Brother label printers (PT-P950NW, PT-P910BT, etc.) and compatible with any printer via PDF output.
+---
 
-> Plugin GLPI pour générer des étiquettes d'inventaire avec QR codes. Compatible imprimantes Brother et export PDF.
+## 一、二次开发亮点
 
-## Features
+### 1. GLPI 12 完整支持（上游不具备）
 
-- **QR codes like GLPI native** — same URL and `QRCODE,H` error correction as GLPI's built-in `BarcodeManager` (GLPI 11 `tc-lib-barcode`; TCPDF's QR encoder on GLPI 10, which does not ship `tc-lib-barcode`)
-- **Rich labels** — QR code + asset name + type + serial number + location + inventory date + company logo + owner text
-- **4 tape sizes** — 24mm, 25mm, 36mm, 50mm with automatic layout adaptation
-- **5 color modes** — Black & White, Monochrome, Color, Inverse (white on black), Inverse Mono
-- **PDF or PNG output** — A4 label sheets (PDF) or one PNG per asset for Brother P-Touch Cube (via iPrint&Label); set globally as PDF, PNG, or both
-- **Print profiles** — create reusable profiles (tape size, color, page format) in admin config, select one at print time
-- **Single item** — "QR Label" tab on each asset page with print-profile selection and number of copies
-- **Bulk generation** — Massive Action on asset lists, just pick a profile (and a number of copies) and print
-- **Download page** — after *Generate*, a page keeps the download buttons on screen (no more short-lived notification link)
-- **Zero dependencies** — uses only GLPI's bundled libraries (TCPDF for PDF, tc-lib-barcode for QR)
-- **GLPI 10 and 11** — fully compatible with both versions (Symfony LegacyFileLoadController support)
-- **GLPI Cloud compatible** — no filesystem dependencies, ephemeral files with auto-cleanup
-- **Multilingual** — French and English included, extensible via .po files
+上游仅支持到 GLPI 11.0.99。本 Fork 解决 GLPI 12 的多处破坏性变更：
 
-## Supported Asset Types
-
-- Computer
-- Monitor
-- Peripheral
-- Network Equipment
-- Printer
-- Phone
-- **GLPI 11 custom assets** (*Setup → Asset definitions*): every active definition gets the tab and the massive action
-
-## Label Format
-
-Each label contains:
-
-```
-┌──────────────────────────────────────┐
-│  ┌─────────┐  │  [LOGO]             │
-│  │ QR CODE │  │  PC-BUREAU-DG       │
-│  │         │  │  Computer           │
-│  │         │  │  S/N: ABC123DEF456  │
-│  └─────────┘  │  Inv: 2024-01-10   │
-│               │  Chambon            │
-│               │  Property of: XXX   │
-└──────────────────────────────────────┘
-```
-
-| Tape size | Label dimensions | QR code | Best for |
-|-----------|-----------------|---------|----------|
-| 24mm | 70 × 24 mm | 13 mm | Brother 24 mm tape, compact labels |
-| 25mm | 70 × 25 mm | 14 mm | Small devices, compact labels |
-| 36mm | 80 × 36 mm | 15 mm | Standard use (default) |
-| 50mm | 90 × 50 mm | 26 mm | Large labels, easy scanning |
-
-## Screenshot
-
-### Single item — "QR Label" tab on asset page
-Open any Computer/Monitor/etc. → click the **QR Label** tab → choose options → Generate.
-
-### Bulk generation — Massive Action
-Select items in a list → Actions → **QR Code Label - Print QR labels** → configure → Generate.
-
-### Configuration page
-Setup → Plugins → QR Code Label (gear icon) → set defaults, upload logo.
-
-## Installation
-
-### GLPI Marketplace (recommended for GLPI Cloud)
-
-1. Search for **QR Code Label** in the GLPI Marketplace (Setup → Plugins → Marketplace)
-2. Click **Install**
-3. Click **Enable**
-
-### Manual installation (self-hosted)
-
-1. Download the latest release from [Releases](https://github.com/tienou/glpi-qrcodelabel/releases)
-2. Extract the `qrcodelabel/` folder into your GLPI `marketplace/` directory
-3. Go to **Setup → Plugins** and click **Install** then **Enable**
-
-## Configuration
-
-After enabling the plugin:
-
-1. **Grant rights** — go to **Administration → Profiles**, open a profile (e.g. *Super-Admin*, *Technician*), open the **QR Code Label** tab and enable *Generate QR labels* and/or *Manage configuration*. Users only see the menu once a right is granted.
-2. Open the configuration screen — **Tools → QR Code Label** (or the gear icon in *Setup → Plugins*). Requires the *Manage configuration* right.
-3. Configure global settings:
-   - **Output format** — PDF (A4 sheet), PNG (Brother P-Touch Cube), or both
-   - **Tape size, color mode, page size, orientation** — defaults for new print profiles
-   - **Show inventory date / Show location** — toggle the optional label lines
-   - **Owner text** — e.g. "Property of: My Company" (displayed on each label)
-4. **Upload a company logo** (PNG/JPEG/GIF; rendered above the QR code, recolored to match the chosen color mode)
-5. **Create print profiles** — each profile stores:
-   - Tape size (24mm, 25mm, 36mm, 50mm)
-   - Color mode (Black & White, Monochrome, Color, Inverse, Inverse Mono)
-   - Show inventory date (Yes/No)
-   - Page size (A4, A3, Letter, Legal)
-   - Orientation (Portrait, Landscape)
-   - Default flag
-
-   Profiles are editable inline and one can be marked as default.
-
-### Label content (configurable)
-
-The right-hand column of a label is no longer fixed. The **Label content (right-hand column)** section of the configuration screen lists one line per field, in print order, each with its own formatting:
-
-| Column | Meaning |
+| 上游在 GLPI 12 的问题 | 本地修复 |
 |---|---|
-| **Field** | Which asset value to print (see list below) |
-| **Prefix** | Literal text drawn before the value, e.g. `S/N: ` |
-| **Font size (pt)** | Size at the 36 mm reference tape; other tape sizes scale proportionally |
-| **Style** | Normal / Bold / Italic / Bold italic |
-| **Text color** | Text · Secondary · Serial · Location · Footnote (colours follow the active color mode) |
-| **Alignment** | Left / Center / Right |
-| **Order** | ↑ / ↓ to move a line, × to delete it |
+| 子类重声明 `CommonGLPI::$rightname` 触发 fatal（父类改为 `public static string` 类型） | 子类不再重声明，改在 `plugin_init_qrcodelabel()` 运行时赋值，兼容 10/11/12 |
+| TCPDF 12 沙箱只允许读取白名单目录，导入的中文字体定义读不到 | 加载时定义 `K_ALLOWED_PATHS`，指向插件字体目录 |
+| GLPI 12 资产-群组关系从 `groups_id` 列移到 `glpi_groups_items` 表，Group 字段打印为空 | 两种存储布局均支持，多个群组合并以逗号连接，新增 **Technician group** 字段 |
+| GLPI 12 移除 legacy CSRF 令牌机制 | 按版本分支注册 `csrf_compliant` |
+| GLPI 11/12 自定义资产类别 | 从 `system_name` 动态读取，自动获得标签页与批量动作 |
 
-Available fields: asset name, asset type, asset sub-type, serial number, inventory number, location, manufacturer, model, status, user, group, supplier, entity, contact, contact phone, UUID, comment, creation date, last inventory date, warranty end, purchase date, ID, asset URL, and the global *Owner text*.
+### 2. 中文标签打印（上游不具备）
 
-A field that does not exist on a given asset type is simply skipped, so one configuration can serve a mixed fleet. A live preview at the bottom of the section shows the resulting order, sizes and alignments.
+- 内置 **Droid Sans Fallback** CJK 字体（`fonts/DroidSansFallbackFull.ttf`），解决中文资产名打印为空方框的问题。
+- `Label::splitRuns()` 将每行文本按 CJK / 非 CJK 切分，分别用对应字体渲染——混合文本如 `研发部工作站 A 区` 可正确显示；拉丁部分保留粗体，CJK 部分用 Droid 字重。
+- PDF 侧字体经 `Com\Tecnick\Pdf\Font\Import` 导入到 `files/_plugins/qrcodelabel/fonts/*.json` 并以子集嵌入，单页 PDF 约 220 KB。
+- 新增简体中文语言包（`locales/zh_CN.po/.mo`）。
+- 字体查找顺序：插件内置 → Linux 系统字体路径 → Windows 字体。可用自有 TTF 替换内置字体（详见 [`fonts/README.md`](fonts/README.md)）。
 
-Behaviour notes:
+### 3. 可配置标签内容（上游不具备）
 
-- Up to 12 lines. When a label is too small the generator first tightens the line spacing, then shrinks all fonts together (down to 60 %), then truncates over-long values with an ellipsis — nothing is silently dropped.
-- *Show inventory date* and *Show location* only generate the **default** list; once a list is saved explicitly it is used as-is (*Restore default content* brings the defaults back).
-- Chinese text uses the embedded Droid Sans Fallback face, which has no italic variant: *Italic* applies to Latin text only.
-- The list is stored as JSON in `glpi_plugin_qrcodelabel_configs.label_fields`; an empty value means "use the built-in default layout", so upgrades keep the previous output.
+- 每行可选任意资产字段，独立设置字号、样式、颜色、对齐，带实时预览与"恢复默认内容"。
+- **每个打印配置档可存自己的行内容**：生成标签时跟随所选配置档；未单独配置的配置档继承全局内容。
+- **Additional fields（fields 插件）自定义字段**自动进入可选列表（键 `af_c<container>_f<field>`），支持文本/数字/日期/是否/dropdown 类型；不适用于某资产类型的字段在打印时自动跳过。
+- 新增 **Label generation time** 字段（`generated`）：打印批次生成时刻 `DD/MM/YYYY HH:MM`。
+- 布局引擎重写为单一纵向流：空间不足时先压缩行距 → 整体缩小字号（最低 60%）→ 超长值省略号截断，不静默丢弃内容。
+- 黑白模式改为调色板灰度渲染（主黑/#666/#333/#999），"单色"模式才是纯黑白；预览使用当前编辑项的实际颜色模式。
 
-## Usage
+### 4. 稳定性与安全性修复
 
-### Print a single label
+- 修 GLPI 10 下所有插件页 HTTP 500（`Class "Session" not found`）；QR 编码回退到 TCPDF 自带编码器（GLPI 10 不含 `tc-lib-barcode`）。
+- 修 QR 标签页自 1.2.0 起未注册的问题；生成后跳转到保留下载按钮的页面。
+- 修 24/25 mm 标签字段不全、36 mm 位置/所有者文字重叠。
+- 修颜色打印与预览不一致（1.8.2）、标签内容编辑器保存丢失（1.8.1）。
+- 安全加固：标签下载端点限定插件文档目录且仅图片文件、批量动作强制插件权限、配置页用插件自身权限、临时文件按用户隔离、logo 重编码为真实 PNG、配置页 HTML 转义。
 
-1. Open any supported asset (Computer, Monitor, etc.)
-2. Click the **QR Label** tab
-3. Select a print profile and the number of copies (PDF)
-4. Click **Generate** → a page with the download button(s) opens
+---
 
-### Print labels in bulk
+## 二、快速开始
 
-1. Go to any asset list (e.g. Assets → Computers)
-2. Select the items you want labels for
-3. Click **Actions** → choose **QR Code Label - Print QR labels**
-4. Select a print profile and the number of copies (PDF)
-5. Click **Generate** → a page with the download button(s) opens (PDF sheet, single PNG, or a ZIP of PNGs depending on the output format)
+### 安装
 
-## Technical Details
+将目录放至 `<GLPI_ROOT>/plugins/qrcodelabel`，在 GLPI 后台启用。字体文件为打印中文所必需，请勿删除。
 
-- **PDF engine**: GLPI's native TCPDF (`vendor/tecnickcom/tcpdf/`) — no external dependencies
-- **QR rendering**: `Com\Tecnick\Barcode\Barcode` (`QRCODE,H`, GLPI 11) or `TCPDF2DBarcode` (`QRCODE,H`, GLPI 10), rendered as high-res PNG via GD (10px/module, 300 DPI)
-- **File delivery**: Ephemeral session-bound token — each file can be downloaded once and is deleted after download (undownloaded files are purged after one hour)
-- **GLPI 11 compatibility**: Respects Symfony's `LegacyFileLoadController` buffer (no `ob_end_clean`, no `exit`)
-- **Database**: `glpi_plugin_qrcodelabel_configs` (global settings) + `glpi_plugin_qrcodelabel_printprofiles` (print profiles)
-- **Rights**: `plugin_qrcodelabel_label` (CREATE) + `plugin_qrcodelabel_config` (UPDATE)
-- **Security**: Input whitelist validation, logo upload verification (`getimagesize`), no raw POST to DB
-- **PHP**: 7.4 – 8.4
+```bash
+cd /var/www/html/glpi/plugins
+git clone https://github.com/KissWam/qrcodelabel.git qrcodelabel
+# GLPI 后台 → 设置 → 插件 → 安装并启用
+```
 
-## Changelog
+### 打印中文标签（浏览器直打示例）
 
-### 1.8.2
-- **Fix** — printed text colors now match the preview: the *Black & White* mode is a grayscale rendering of the palette (main black, secondary #666, serial #333, footnote #999) instead of flattening every line to black. Use *Monochrome* for pure black/white. The preview also uses the color mode of the item being edited (global settings or the selected print profile), including inverse modes.
+针对实际打印环境（GP-1134T，300 dpi，USB 直连）的完整步骤见 [`docs/操作指南.md`](docs/操作指南.md)。通用流程：
 
-### 1.8.1
-- **Fix** — the label-content editor gains its own *Save label content* button; the print-profile Save button now also persists the editor rows when the editor targets that profile (previously the label edits were silently dropped).
+1. 打开任一资产 → **QR Label** 标签页 → 选择打印配置档与份数；
+2. 点 **Generate**，在跳转页下载 PDF 或 PNG；或在配置中设为浏览器直打；
+3. 浏览器打印对话框中选择 **100% 缩放（不缩放）**。
 
-### 1.8.0
-- **New** — per-profile label content: each print profile can store its own line list (label content follows the profile selected in the generate dialog). Profiles without their own copy inherit the global content. Edit via the *Edit target* selector in the label-content section.
+标签内容编辑：配置页 → *Edit target* 选择全局或某配置档 → 增删行、设字号/样式/颜色/对齐 → 保存。
 
-### 1.7.3
-- **New** — *Label generation time* field (`generated`): prints DD/MM/YYYY HH:MM of the moment the label batch was generated.
+---
 
-### 1.7.2
-- **Fix** — the *Group* field printed nothing on GLPI 12: asset-group relations moved from a `groups_id` column to the `glpi_groups_items` table; both storage layouts are now supported, multiple groups are joined with a comma, and a *Technician group* field was added.
+## 三、兼容性
 
-### 1.7.1
-- **New** — fields created with the *Additional fields* (fields) plugin now appear in the label-content picker automatically (keys `af_c<container>_f<field>`). Text, number, date, yes-no and dropdown custom field types are supported; fields that do not apply to a given asset type are skipped at print time.
+| GLPI | 支持 | 备注 |
+|---|---|---|
+| 12.0.x | ✅ | v1.6.1 起完整支持（CJK 字体、Group 字段、rightname） |
+| 11.x | ✅ | 自定义资产、tc-lib-barcode |
+| 10.x | ✅ | QR 编码回退 TCPDF、`Session` 引导修复 |
 
-### 1.7.0
-- **New** — configurable label content: pick any asset field, set order, font size, style, color and alignment per line, with a live preview and a *Restore default content* action (`src/Fields.php`, `glpi_plugin_qrcodelabel_configs.label_fields`).
-- **New** — Simplified Chinese translation (`locales/zh_CN.po` / `.po`→`.mo`).
-- Layout engine rewritten as a single vertical flow, so lines are no longer grouped into a fixed top block and bottom block.
+PHP 7.4–8.4。支持资产类型：Computer / Monitor / Peripheral / Phone / Printer / NetworkEquipment / 打印机墨盒 / 自定义资产类别 / fields 插件自定义字段。
 
-### 1.6.1
-- **Fix** — Chinese characters rendered as empty boxes: bundled Droid Sans Fallback, per-run font switching for mixed CJK/Latin text, and `K_ALLOWED_PATHS` so the TCPDF 12 sandbox can read the imported font definition.
+---
 
-### 1.5.0
-- **Fix (#4)** — HTTP 500 on every plugin page with GLPI 10 (`Class "Session" not found`): the `front/` scripts did not bootstrap GLPI 10 (GLPI 11 does it through its Symfony kernel).
-- **Fix** — label generation always failed on GLPI 10 (`Com\Tecnick\Barcode\Barcode` is only bundled with GLPI 11): falls back to TCPDF's own QR encoder.
-- **Fix (#3)** — the *QR Label* tab was never registered on asset forms since 1.2.0; *Generate* now opens a page that keeps the download buttons on screen (the link used to live in a notification that vanished after a few seconds); *Number of copies* is back (PDF).
-- **Fix (#2)** — 24 mm (and 25 mm) labels now print every enabled field (inventory date, location, owner text, inventory number): the text block adapts its spacing/size and shortens long values with an ellipsis. Also fixes the location / owner text overlap on 36 mm.
-- **New (#1)** — GLPI 11 custom assets: tab + massive action on every active asset definition.
-- **Security** — labels can only be generated for items the user can read (entity check); purging a profile no longer wipes the plugin rights of every other profile; HTML escaping on the configuration page; uploaded logos are re-encoded as real PNG (a JPEG/GIF logo broke PDF generation).
-- Massive action reports per-item results; menu and gear icon follow the plugin's *Manage configuration* right; missing translations added.
+## 四、版本历史（本 Fork，相对上游 v1.5.1）
 
-### 1.4.6
-- Internal: migrated `$PLUGIN_HOOKS` registrations to the `\Glpi\Plugin\Hooks` class constants (GLPI 10/11 best practice). No behaviour change.
+| 版本 | 主要改动 |
+|---|---|
+| 1.8.2 | 黑白模式颜色渲染与预览一致性修复 |
+| 1.8.1 | 标签内容编辑器独立保存按钮 |
+| 1.8.0 | 每个打印配置档独立标签内容 |
+| 1.7.3 | 标签生成时间字段 `generated` |
+| 1.7.2 | GLPI 12 Group 字段修复 + Technician group 字段 |
+| 1.7.1 | fields 插件自定义字段接入 |
+| 1.7.0 | 可配置标签内容、简体中文翻译、布局引擎重写 |
+| 1.6.1 | 中文 CJK 字体、混合文本分字体渲染、TCPDF 沙箱路径 |
+| 1.5.0 | GLPI 12 基础兼容、自定义资产、多项修复与安全加固 |
 
-### 1.4.5
-- **Security** — the label/logo download endpoint is now restricted to the plugin's own document folder and to image files only (no more arbitrary-file fallback).
-- **Security** — the *Generate labels* massive action now enforces the `plugin_qrcodelabel_label` right.
-- Configuration screens are gated on the plugin's own `plugin_qrcodelabel_config` right instead of the GLPI core *config* right, so a **Technician** profile can be allowed to manage settings without full setup rights.
-- Intermediate QR/logo temp files are isolated per user (no cross-user cleanup races).
+完整逐版本说明见 [`CHANGELOG.md`](CHANGELOG.md)，fork 改造摘要见 [`FORK_NOTES.md`](FORK_NOTES.md)。
 
-### 1.4.4
-- **Fix** — the **QR Code Label** rights tab now appears on profile forms (*Administration → Profiles*), so admins can grant plugin access to any profile (Technician, etc.). Previously the tab was missing on every profile.
+---
 
-### 1.4.3
-- Logo-above-QR layout; Brother tape tuning.
+## 五、许可证与致谢
 
-### 1.4.2
-- Optional location display.
-
-### 1.4.1
-- Bundled Noto Sans font; removed the unused `printer_type` setting.
-
-### 1.4.0
-- Global output format (PDF / PNG / both); Brother tape tuning.
-
-### 1.3.x
-- PNG export for Brother P-Touch Cube (1.3.0); CSRF hotfix (1.3.1).
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request on [GitHub](https://github.com/tienou/glpi-qrcodelabel).
-
-## License
-
-[AGPL v3.0](LICENSE)
-
-## Author
-
-**Etienne Gaillard**
+- 本 Fork 遵循上游许可证 **AGPL-3.0**（见 [LICENSE](LICENSE)）。
+- 上游原作者：**Etienne Gaillard** — https://github.com/tienou/glpi-qrcodelabel
+- 内置字体：Noto Sans / Droid Sans Fallback（Apache 2.0，© Google LLC），详见 [`fonts/README.md`](fonts/README.md)。

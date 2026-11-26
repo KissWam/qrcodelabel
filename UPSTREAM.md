@@ -1,0 +1,193 @@
+> **归档文件**：以下为上游 [tienou/glpi-qrcodelabel](https://github.com/tienou/glpi-qrcodelabel) v1.5.1 的 README 原文，仅作追溯保留。本 Fork 的功能说明见 [README.md](README.md)。
+
+# QR Code Label — GLPI Plugin（上游原文）
+
+[![GLPI Version](https://img.shields.io/badge/GLPI-10.0%20%7C%2011.0-blue)](https://glpi-project.org/)
+[![PHP Version](https://img.shields.io/badge/PHP-7.4%E2%80%938.4-8892BF)](https://php.net/)
+[![License](https://img.shields.io/badge/License-AGPL%20v3-green)](LICENSE)
+
+Generate rich inventory labels with QR codes directly from GLPI. Designed for Brother label printers (PT-P950NW, PT-P910BT, etc.) and compatible with any printer via PDF output.
+
+> Plugin GLPI pour générer des étiquettes d'inventaire avec QR codes. Compatible imprimantes Brother et export PDF.
+
+## Features
+
+- **QR codes like GLPI native** — same URL and `QRCODE,H` error correction as GLPI's built-in `BarcodeManager` (GLPI 11 `tc-lib-barcode`; TCPDF's QR encoder on GLPI 10, which does not ship `tc-lib-barcode`)
+- **Rich labels** — QR code + asset name + type + serial number + location + inventory date + company logo + owner text
+- **4 tape sizes** — 24mm, 25mm, 36mm, 50mm with automatic layout adaptation
+- **5 color modes** — Black & White, Monochrome, Color, Inverse (white on black), Inverse Mono
+- **PDF or PNG output** — A4 label sheets (PDF) or one PNG per asset for Brother P-Touch Cube (via iPrint&Label); set globally as PDF, PNG, or both
+- **Print profiles** — create reusable profiles (tape size, color, page format) in admin config, select one at print time
+- **Single item** — "QR Label" tab on each asset page with print-profile selection and number of copies
+- **Bulk generation** — Massive Action on asset lists, just pick a profile (and a number of copies) and print
+- **Download page** — after *Generate*, a page keeps the download buttons on screen (no more short-lived notification link)
+- **Zero dependencies** — uses only GLPI's bundled libraries (TCPDF for PDF, tc-lib-barcode for QR)
+- **GLPI 10 and 11** — fully compatible with both versions (Symfony LegacyFileLoadController support)
+- **GLPI Cloud compatible** — no filesystem dependencies, ephemeral files with auto-cleanup
+- **Multilingual** — French and English included, extensible via .po files
+
+## Supported Asset Types
+
+- Computer
+- Monitor
+- Peripheral
+- Network Equipment
+- Printer
+- Phone
+- **GLPI 11 custom assets** (*Setup → Asset definitions*): every active definition gets the tab and the massive action
+
+## Label Format
+
+Each label contains:
+
+```
+┌──────────────────────────────────────┐
+│  ┌─────────┐  │  [LOGO]             │
+│  │ QR CODE │  │  PC-BUREAU-DG       │
+│  │         │  │  Computer           │
+│  │         │  │  S/N: ABC123DEF456  │
+│  └─────────┘  │  Inv: 2024-01-10   │
+│               │  Chambon            │
+│               │  Property of: XXX   │
+└──────────────────────────────────────┘
+```
+
+| Tape size | Label dimensions | QR code | Best for |
+|-----------|-----------------|---------|----------|
+| 24mm | 70 × 24 mm | 13 mm | Brother 24 mm tape, compact labels |
+| 25mm | 70 × 25 mm | 14 mm | Small devices, compact labels |
+| 36mm | 80 × 36 mm | 15 mm | Standard use (default) |
+| 50mm | 90 × 50 mm | 26 mm | Large labels, easy scanning |
+
+## Screenshot
+
+### Single item — "QR Label" tab on asset page
+Open any Computer/Monitor/etc. → click the **QR Label** tab → choose options → Generate.
+
+### Bulk generation — Massive Action
+Select items in a list → Actions → **QR Code Label - Print QR labels** → configure → Generate.
+
+### Configuration page
+Setup → Plugins → QR Code Label (gear icon) → set defaults, upload logo.
+
+## Installation
+
+### GLPI Marketplace (recommended for GLPI Cloud)
+
+1. Search for **QR Code Label** in the GLPI Marketplace (Setup → Plugins → Marketplace)
+2. Click **Install**
+3. Click **Enable**
+
+### Manual installation (self-hosted)
+
+1. Download the latest release from [Releases](https://github.com/tienou/glpi-qrcodelabel/releases)
+2. Extract the `qrcodelabel/` folder into your GLPI `marketplace/` directory
+3. Go to **Setup → Plugins** and click **Install** then **Enable**
+
+## Configuration
+
+After enabling the plugin:
+
+1. **Grant rights** — go to **Administration → Profiles**, open a profile (e.g. *Super-Admin*, *Technician*), open the **QR Code Label** tab and enable *Generate QR labels* and/or *Manage configuration*. Users only see the menu once a right is granted.
+2. Open the configuration screen — **Tools → QR Code Label** (or the gear icon in *Setup → Plugins*). Requires the *Manage configuration* right.
+3. Configure global settings:
+   - **Output format** — PDF (A4 sheet), PNG (Brother P-Touch Cube), or both
+   - **Tape size, color mode, page size, orientation** — defaults for new print profiles
+   - **Show inventory date / Show location** — toggle the optional label lines
+   - **Owner text** — e.g. "Property of: My Company" (displayed on each label)
+4. **Upload a company logo** (PNG/JPEG/GIF; rendered above the QR code, recolored to match the chosen color mode)
+5. **Create print profiles** — each profile stores:
+   - Tape size (24mm, 25mm, 36mm, 50mm)
+   - Color mode (Black & White, Monochrome, Color, Inverse, Inverse Mono)
+   - Show inventory date (Yes/No)
+   - Page size (A4, A3, Letter, Legal)
+   - Orientation (Portrait, Landscape)
+   - Default flag
+
+   Profiles are editable inline and one can be marked as default.
+
+## Usage
+
+### Print a single label
+
+1. Open any supported asset (Computer, Monitor, etc.)
+2. Click the **QR Label** tab
+3. Select a print profile and the number of copies (PDF)
+4. Click **Generate** → a page with the download button(s) opens
+
+### Print labels in bulk
+
+1. Go to any asset list (e.g. Assets → Computers)
+2. Select the items you want labels for
+3. Click **Actions** → choose **QR Code Label - Print QR labels**
+4. Select a print profile and the number of copies (PDF)
+5. Click **Generate** → a page with the download button(s) opens (PDF sheet, single PNG, or a ZIP of PNGs depending on the output format)
+
+## Technical Details
+
+- **PDF engine**: GLPI's native TCPDF (`vendor/tecnickcom/tcpdf/`) — no external dependencies
+- **QR rendering**: `Com\Tecnick\Barcode\Barcode` (`QRCODE,H`, GLPI 11) or `TCPDF2DBarcode` (`QRCODE,H`, GLPI 10), rendered as high-res PNG via GD (10px/module, 300 DPI)
+- **File delivery**: Ephemeral session-bound token — each file can be downloaded once and is deleted after download (undownloaded files are purged after one hour)
+- **GLPI 11 compatibility**: Respects Symfony's `LegacyFileLoadController` buffer (no `ob_end_clean`, no `exit`)
+- **Database**: `glpi_plugin_qrcodelabel_configs` (global settings) + `glpi_plugin_qrcodelabel_printprofiles` (print profiles)
+- **Rights**: `plugin_qrcodelabel_label` (CREATE) + `plugin_qrcodelabel_config` (UPDATE)
+- **Security**: Input whitelist validation, logo upload verification (`getimagesize`), no raw POST to DB
+- **PHP**: 7.4 – 8.4
+
+## Changelog
+
+### 1.5.1
+Alignment with the official GLPI developer documentation (GLPI 11 upgrade guide). Tested on GLPI 10.0.28 and 11.0 (PHP 8.5), lint-checked on PHP 7.4.
+- Front scripts no longer call `Html::displayErrorAndDie()` (deprecated in GLPI 11): errors now throw the `Glpi\Exception\Http\*` exceptions on GLPI 11 (proper HTTP 400 / 403 / 404), with the legacy behaviour kept on GLPI 10.
+- Install no longer calls `DBmysql::doQueryOrDie()` (deprecated in GLPI 11, absent before GLPI 10.0.11 although 10.0.0 is the declared minimum).
+- Uninstall now removes the plugin data folder (`files/_plugins/qrcodelabel`, uploaded logo), as the plugin guidelines recommend.
+- The configuration page is shown under *Tools*, like its menu entry.
+- Removed `plugin_qrcodelabel_check_prerequisites()`, which duplicated the `gd` requirement already declared in `plugin_version_qrcodelabel()`.
+
+### 1.5.0
+- **Fix (#4)** — HTTP 500 on every plugin page with GLPI 10 (`Class "Session" not found`): the `front/` scripts did not bootstrap GLPI 10 (GLPI 11 does it through its Symfony kernel).
+- **Fix** — label generation always failed on GLPI 10 (`Com\Tecnick\Barcode\Barcode` is only bundled with GLPI 11): falls back to TCPDF's own QR encoder.
+- **Fix (#3)** — the *QR Label* tab was never registered on asset forms since 1.2.0; *Generate* now opens a page that keeps the download buttons on screen (the link used to live in a notification that vanished after a few seconds); *Number of copies* is back (PDF).
+- **Fix (#2)** — 24 mm (and 25 mm) labels now print every enabled field (inventory date, location, owner text, inventory number): the text block adapts its spacing/size and shortens long values with an ellipsis. Also fixes the location / owner text overlap on 36 mm.
+- **New (#1)** — GLPI 11 custom assets: tab + massive action on every active asset definition.
+- **Security** — labels can only be generated for items the user can read (entity check); purging a profile no longer wipes the plugin rights of every other profile; HTML escaping on the configuration page; uploaded logos are re-encoded as real PNG (a JPEG/GIF logo broke PDF generation).
+- Massive action reports per-item results; menu and gear icon follow the plugin's *Manage configuration* right; missing translations added.
+
+### 1.4.6
+- Internal: migrated `$PLUGIN_HOOKS` registrations to the `\Glpi\Plugin\Hooks` class constants (GLPI 10/11 best practice). No behaviour change.
+
+### 1.4.5
+- **Security** — the label/logo download endpoint is now restricted to the plugin's own document folder and to image files only (no more arbitrary-file fallback).
+- **Security** — the *Generate labels* massive action now enforces the `plugin_qrcodelabel_label` right.
+- Configuration screens are gated on the plugin's own `plugin_qrcodelabel_config` right instead of the GLPI core *config* right, so a **Technician** profile can be allowed to manage settings without full setup rights.
+- Intermediate QR/logo temp files are isolated per user (no cross-user cleanup races).
+
+### 1.4.4
+- **Fix** — the **QR Code Label** rights tab now appears on profile forms (*Administration → Profiles*), so admins can grant plugin access to any profile (Technician, etc.). Previously the tab was missing on every profile.
+
+### 1.4.3
+- Logo-above-QR layout; Brother tape tuning.
+
+### 1.4.2
+- Optional location display.
+
+### 1.4.1
+- Bundled Noto Sans font; removed the unused `printer_type` setting.
+
+### 1.4.0
+- Global output format (PDF / PNG / both); Brother tape tuning.
+
+### 1.3.x
+- PNG export for Brother P-Touch Cube (1.3.0); CSRF hotfix (1.3.1).
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request on [GitHub](https://github.com/tienou/glpi-qrcodelabel).
+
+## License
+
+[AGPL v3.0](LICENSE)
+
+## Author
+
+**Etienne Gaillard**
