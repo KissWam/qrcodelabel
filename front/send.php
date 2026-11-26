@@ -1,0 +1,97 @@
+<?php
+
+/*
+   ------------------------------------------------------------------------
+   QR Code Label
+   Copyright (C) 2026 by Etienne Gaillard
+   ------------------------------------------------------------------------
+   LICENSE: AGPL License 3.0 or (at your option) any later version
+   ------------------------------------------------------------------------
+
+   PDF delivery — compatible GLPI 10 and GLPI 11 (Symfony).
+
+   GLPI 11 uses LegacyFileLoadController:
+     1. ob_start()
+     2. require( this file )
+     3. $content = ob_get_clean()
+     4. new Response($content) with headers copied from headers_list()
+
+   Therefore:
+     - Do NOT call ob_end_clean() — would destroy the Symfony buffer.
+     - Do NOT call exit/die — would prevent Symfony from building the Response.
+     - readfile() writes into the active buffer; Symfony captures it.
+     - header() is captured by Symfony via headers_list().
+ */
+
+use GlpiPlugin\Qrcodelabel\Label;
+
+// GLPI 10 serves plugin front files as plain PHP scripts: bootstrap GLPI here.
+// GLPI 11 has already booted through its Symfony kernel (LegacyFileLoadController)
+// and defined GLPI_ROOT.
+if (!defined('GLPI_ROOT')) {
+   include __DIR__ . '/../../../inc/includes.php';
+}
+
+Session::checkLoginUser();
+
+// ── Resolve token ─────────────────────────────────────────────────────────
+if (empty($_GET['token'])) {
+   Label::fatalError(__('Invalid request.', 'qrcodelabel'));
+}
+
+$token   = (string)$_GET['token'];
+$absPath = Label::resolveTmpFile($token);
+
+if ($absPath === null) {
+   Label::fatalError(
+      __('The requested file no longer exists or has already been downloaded.', 'qrcodelabel')
+   );
+}
+
+// ── Security: path must be inside GLPI_TMP_DIR ────────────────────────────
+$realPath = realpath($absPath);
+$realTmp  = realpath(GLPI_TMP_DIR);
+
+if ($realPath === false || $realTmp === false
+      || strpos($realPath, $realTmp . DIRECTORY_SEPARATOR) !== 0) {
+   Label::fatalError(__('Unauthorized access to this file', 'qrcodelabel'));
+}
+
+// ── Content type + download filename (PDF / PNG / ZIP) ───────────────────
+$ext = strtolower(pathinfo($realPath, PATHINFO_EXTENSION));
+$contentTypes = [
+   'pdf' => 'application/pdf',
+   'png' => 'image/png',
+   'zip' => 'application/zip',
+];
+$contentType = $contentTypes[$ext] ?? 'application/octet-stream';
+
+$downloadName = 'qr_labels.' . $ext;
+$tmpBasename  = basename($realPath);
+// Filename patterns:
+//   qrcodelabel_<userid>_<tape>_<rand>.pdf
+//   qrcodelabel_<userid>_<tape>_<assetid>_<rand>.png
+//   qrcodelabel_<userid>_<tape>_<rand>.zip
+if (preg_match('/qrcodelabel_\d+_([a-zA-Z0-9]+)_.*\.(pdf|png|zip)$/', $tmpBasename, $m)) {
+   $downloadName = 'qr_labels_' . $m[1] . '.' . $m[2];
+}
+
+// ── Schedule deletion after response ──────────────────────────────────────
+register_shutdown_function(static function () use ($realPath): void {
+   if (file_exists($realPath)) {
+      @unlink($realPath);
+   }
+});
+
+$filesize = filesize($realPath);
+
+// ── Headers ───────────────────────────────────────────────────────────────
+header('Content-Type: ' . $contentType);
+header('Content-Length: ' . $filesize);
+header('Content-Disposition: attachment; filename="' . $downloadName . '"');
+header('Cache-Control: private, must-revalidate');
+header('Pragma: private');
+header('Expires: Mon, 26 Nov 1962 00:00:00 GMT');
+
+// ── Output file into the active buffer ────────────────────────────────────
+readfile($realPath);

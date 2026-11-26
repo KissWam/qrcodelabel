@@ -1,0 +1,413 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: QR Code Label\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Add a print profile"
+msgstr "新增打印配置"
+
+msgid "Add field"
+msgstr "添加字段"
+
+msgid "Alignment"
+msgstr "对齐"
+
+msgid "Approximate rendering. The generator also tightens spacing and shrinks the text when a label is too small."
+msgstr "近似预览。标签过小时，生成器还会压缩行距并缩小字号。"
+
+msgid "Asset URL"
+msgstr "资产链接"
+
+msgid "Asset name"
+msgstr "资产名称"
+
+msgid "Asset sub-type"
+msgstr "资产子类型"
+
+msgid "Asset type"
+msgstr "资产类型"
+
+msgid "Black & White"
+msgstr "黑白"
+
+msgid "Bold"
+msgstr "加粗"
+
+msgid "Bold italic"
+msgstr "加粗斜体"
+
+msgid "Both (PDF + PNG)"
+msgstr "两者（PDF + PNG）"
+
+msgid "Color"
+msgstr "彩色"
+
+msgid "Color mode"
+msgstr "颜色模式"
+
+msgid "Comment"
+msgstr "备注"
+
+msgid "Company logo"
+msgstr "公司 Logo"
+
+msgid "Configuration saved."
+msgstr "配置已保存。"
+
+msgid "Contact"
+msgstr "联系人"
+
+msgid "Contact phone"
+msgstr "联系电话"
+
+msgid "Creation date"
+msgstr "创建日期"
+
+msgid "Custom field"
+msgstr "自定义字段"
+
+msgid "Edit target"
+msgstr "编辑对象"
+
+msgid "Global content"
+msgstr "全局内容"
+
+msgid "This print profile inherits the global content. Edit and save below to give it its own copy."
+msgstr "该打印配置当前继承全局内容；在下方编辑并保存后，它将拥有专属内容。"
+
+msgid "Custom content of \"%s\". Use \"Restore default content\" to inherit the global content again."
+msgstr "「%s」的专属内容。点「恢复默认内容」可回到继承全局内容。"
+
+msgid "Lines are printed top to bottom in this order. The generate dialog switches the label content together with the print profile; a profile with its own copy uses it, the others use the global content."
+msgstr "按此顺序自上而下打印。生成时标签内容随所选打印配置切换：有专属内容的配置用它，其余用全局内容。"
+
+msgid "Label content saved to the print profile."
+msgstr "已保存到打印配置的专属标签内容。"
+
+msgid "Save label content"
+msgstr "保存标签内容"
+
+msgid "Revert this print profile to the inherited global content?"
+msgstr "确定让该打印配置恢复继承全局内容？"
+
+msgid "Revert to inherited content"
+msgstr "恢复继承全局内容"
+
+msgid "Inherits global content"
+msgstr "继承全局内容"
+
+msgid "Custom content (%d lines)"
+msgstr "自定义内容（%d 行）"
+
+msgid "The label content follows the selected print profile (profiles without their own copy use the global content configured in the plugin settings)."
+msgstr "标签内容随所选打印配置自动切换：有专属内容的配置用它，其余使用插件设置中的全局内容。"
+
+msgid "Label generation time"
+msgstr "二维码生成时间"
+
+msgid "Default"
+msgstr "默认"
+
+msgid "Default color mode"
+msgstr "默认颜色模式"
+
+msgid "Default orientation"
+msgstr "默认纸张方向"
+
+msgid "Default page size"
+msgstr "默认纸张大小"
+
+msgid "Default tape size"
+msgstr "默认标签宽度"
+
+msgid "Delete the logo"
+msgstr "删除 Logo"
+
+msgid "Download QR label (PNG)"
+msgstr "下载二维码标签（PNG）"
+
+msgid "Download QR labels (PDF)"
+msgstr "下载二维码标签（PDF）"
+
+msgid "Download QR labels (ZIP of PNGs)"
+msgstr "下载二维码标签（PNG 压缩包）"
+
+msgid "Each file can be downloaded once; generate the labels again if needed."
+msgstr "每个文件仅可下载一次，如需重复下载请重新生成。"
+
+msgid "Entity"
+msgstr "实体"
+
+msgid "Field"
+msgstr "字段"
+
+msgid "File not found."
+msgstr "文件不存在。"
+
+msgid "Font size (pt)"
+msgstr "字号（pt）"
+
+msgid "Footnote"
+msgstr "脚注"
+
+msgid "GD extension is required for QR code and logo image processing."
+msgstr "生成二维码与处理 Logo 需要 GD 扩展。"
+
+msgid "Generate"
+msgstr "生成"
+
+msgid "Generate QR label"
+msgstr "生成二维码标签"
+
+msgid "Generate QR labels"
+msgstr "生成二维码标签"
+
+msgid "Group"
+msgstr "群组"
+
+msgid "Technician group"
+msgstr "技术群组"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Invalid file: only PNG, JPEG and GIF images are accepted."
+msgstr "文件无效：仅支持 PNG、JPEG 和 GIF 图片。"
+
+msgid "Invalid request."
+msgstr "无效请求。"
+
+msgid "Inventory number"
+msgstr "资产编号"
+
+msgid "Inverse (white on black)"
+msgstr "反色（黑底白字）"
+
+msgid "Inverse Mono"
+msgstr "反色单色"
+
+msgid "Italic"
+msgstr "斜体"
+
+msgid "Item not found."
+msgstr "资产不存在。"
+
+msgid "Label content (right-hand column)"
+msgstr "标签内容（右侧栏）"
+
+msgid "Label generation failed."
+msgstr "标签生成失败。"
+
+msgid "Landscape"
+msgstr "横向"
+
+msgid "Last inventory date"
+msgstr "最后盘点日期"
+
+msgid "Lines are printed top to bottom in this order. \"Show inventory date\" and \"Show location\" above only define the default list; once a list is saved here, it is used as-is."
+msgstr "各行按此顺序自上而下打印。上方的「显示入库日期」「显示位置」只用于生成默认清单；一旦在此保存清单，即以该清单为准。"
+
+msgid "Location"
+msgstr "位置"
+
+msgid "Logo uploaded successfully."
+msgstr "Logo 上传成功。"
+
+msgid "Manage configuration"
+msgstr "管理配置"
+
+msgid "Manufacturer"
+msgstr "制造商"
+
+msgid "Model"
+msgstr "型号"
+
+msgid "Monochrome"
+msgstr "单色"
+
+msgid "Move down"
+msgstr "下移"
+
+msgid "Move up"
+msgstr "上移"
+
+msgid "New fields are appended at the end. Font sizes refer to the 36 mm tape and are scaled proportionally for the other sizes."
+msgstr "新字段追加到末尾。字号以 36 mm 标签为基准，其他规格按比例自动换算。"
+
+msgid "No TTF font available for PNG export. Install fonts-liberation or fonts-dejavu, or drop a TTF in plugins/qrcodelabel/fonts/."
+msgstr "PNG 导出缺少 TTF 字体。请安装 fonts-liberation 或 fonts-dejavu，或将 TTF 放入 plugins/qrcodelabel/fonts/。"
+
+msgid "No label file is waiting for download. Generate the labels again."
+msgstr "没有待下载的标签文件，请重新生成。"
+
+msgid "No print profile configured."
+msgstr "尚未配置打印配置。"
+
+msgid "No print profile found."
+msgstr "未找到打印配置。"
+
+msgid "Normal"
+msgstr "常规"
+
+msgid "Note"
+msgstr "备注"
+
+msgid "Number of copies"
+msgstr "份数"
+
+msgid "Order"
+msgstr "顺序"
+
+msgid "Orientation"
+msgstr "方向"
+
+msgid "Output format"
+msgstr "输出格式"
+
+msgid "Owner text"
+msgstr "所有者文本"
+
+msgid "Owner text (global setting)"
+msgstr "所有者文本（全局设置）"
+
+msgid "PDF (label sheet)"
+msgstr "PDF（标签页）"
+
+msgid "PHP zip extension is required for multi-label PNG export."
+msgstr "批量导出 PNG 需要 PHP zip 扩展。"
+
+msgid "PNG (Brother P-Touch Cube)"
+msgstr "PNG（Brother 标签机）"
+
+msgid "Page size"
+msgstr "纸张大小"
+
+msgid "Portrait"
+msgstr "纵向"
+
+msgid "Prefix"
+msgstr "前缀"
+
+msgid "Preview (36 mm)"
+msgstr "预览（36 mm）"
+
+msgid "Print QR labels"
+msgstr "打印二维码标签"
+
+msgid "Print profile"
+msgstr "打印配置"
+
+msgid "Print profile added."
+msgstr "打印配置已添加。"
+
+msgid "Print profile deleted."
+msgstr "打印配置已删除。"
+
+msgid "Print profiles"
+msgstr "打印配置"
+
+msgid "Print profile updated."
+msgstr "打印配置已更新。"
+
+msgid "Profile name is required."
+msgstr "配置名称不能为空。"
+
+msgid "Purchase date"
+msgstr "采购日期"
+
+msgid "QR Code Label"
+msgstr "二维码标签"
+
+msgid "QR Code Label - Configuration"
+msgstr "二维码标签 - 配置"
+
+msgid "QR Code Labels"
+msgstr "二维码标签"
+
+msgid "QR Label"
+msgstr "二维码标签"
+
+msgid "Restore default content"
+msgstr "恢复默认内容"
+
+msgid "Restore the default label content?"
+msgstr "确定恢复默认标签内容？"
+
+msgid "Secondary"
+msgstr "次要"
+
+msgid "Serial"
+msgstr "序列号"
+
+msgid "Serial number"
+msgstr "序列号"
+
+msgid "Show inventory date"
+msgstr "显示入库日期"
+
+msgid "Show location"
+msgstr "显示位置"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Style"
+msgstr "样式"
+
+msgid "Supplier"
+msgstr "供应商"
+
+msgid "TCPDF not found in GLPI vendor directory."
+msgstr "GLPI 的 vendor 目录中未找到 TCPDF。"
+
+msgid "Tape size"
+msgstr "标签宽度"
+
+msgid "Text"
+msgstr "正文"
+
+msgid "Text color"
+msgstr "文字颜色"
+
+msgid "The logo could not be saved."
+msgstr "Logo 保存失败。"
+
+msgid "The logo has been removed."
+msgstr "Logo 已删除。"
+
+msgid "The requested file no longer exists or has already been downloaded."
+msgstr "请求的文件已不存在或已被下载。"
+
+msgid "UUID"
+msgstr "UUID"
+
+msgid "Unable to write the generated PDF file."
+msgstr "无法写入生成的 PDF 文件。"
+
+msgid "Unauthorized access to this file"
+msgstr "无权访问该文件"
+
+msgid "Unsupported itemtype."
+msgstr "不支持的资产类型。"
+
+msgid "Upload logo"
+msgstr "上传 Logo"
+
+msgid "User"
+msgstr "使用者"
+
+msgid "Warranty end"
+msgstr "保修到期"
+
+msgid "Your labels are ready:"
+msgstr "标签已生成："
+
+msgid "e.g. Property of: My Company"
+msgstr "例如：某某公司资产"
+
+msgid "e.g. S/N: "
+msgstr "例如：S/N: "

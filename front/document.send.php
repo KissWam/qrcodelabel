@@ -1,0 +1,68 @@
+<?php
+
+/*
+   ------------------------------------------------------------------------
+   QR Code Label
+   Copyright (C) 2026 by Etienne Gaillard
+   ------------------------------------------------------------------------
+   LICENSE: AGPL License 3.0 or (at your option) any later version
+   ------------------------------------------------------------------------
+
+   Serves static files from GLPI_PLUGIN_DOC_DIR (e.g. logo.png).
+   Compatible with GLPI 10 and GLPI 11.
+ */
+
+use GlpiPlugin\Qrcodelabel\Label;
+
+// GLPI 10 serves plugin front files as plain PHP scripts: bootstrap GLPI here.
+// GLPI 11 has already booted through its Symfony kernel (LegacyFileLoadController)
+// and defined GLPI_ROOT.
+if (!defined('GLPI_ROOT')) {
+   include __DIR__ . '/../../../inc/includes.php';
+}
+
+Session::checkLoginUser();
+
+if (empty($_GET['file'])) {
+   Label::fatalError(__('File not found.', 'qrcodelabel'));
+}
+
+$file = (string)$_GET['file'];
+// Reject any traversal attempt up-front; realpath check below is a defence-in-depth.
+if (strpos($file, '..') !== false || strpos($file, "\0") !== false) {
+   Label::fatalError(__('File not found.', 'qrcodelabel'));
+}
+$path = GLPI_PLUGIN_DOC_DIR . '/' . ltrim(str_replace('\\', '/', $file), '/');
+
+if (!file_exists($path)) {
+   Label::fatalError(__('File not found.', 'qrcodelabel'));
+}
+
+// Security: file must be inside THIS plugin's own doc subdirectory — never the
+// shared GLPI_PLUGIN_DOC_DIR root, which also holds other plugins' files.
+$realPath = realpath($path);
+$realDoc  = realpath(GLPI_PLUGIN_DOC_DIR . '/qrcodelabel');
+if ($realPath === false || $realDoc === false
+      || strpos($realPath, $realDoc . DIRECTORY_SEPARATOR) !== 0) {
+   Label::fatalError(__('File not found.', 'qrcodelabel'));
+}
+
+// Only ever serve image files; reject any other extension outright (no
+// octet-stream fallback that could leak arbitrary files).
+$ext     = strtolower(pathinfo($realPath, PATHINFO_EXTENSION));
+$mimeMap = [
+   'png'  => 'image/png',
+   'jpg'  => 'image/jpeg',
+   'jpeg' => 'image/jpeg',
+   'gif'  => 'image/gif',
+];
+if (!isset($mimeMap[$ext])) {
+   Label::fatalError(__('File not found.', 'qrcodelabel'));
+}
+$mime = $mimeMap[$ext];
+
+header('Content-Type: ' . $mime);
+header('Content-Length: ' . filesize($realPath));
+header('Cache-Control: public, max-age=86400');
+
+readfile($realPath);

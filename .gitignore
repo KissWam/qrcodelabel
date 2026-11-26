@@ -1,0 +1,33 @@
+*.pyc
+__pycache__/
+.DS_Store
+Thumbs.db
+
+# Editor / agent local state
+.workbuddy/
+.idea/
+.vscode/
+
+# Backup files
+*.bak
+*.bak-*
+*-othercomputer*
+
+# Local deployment & diagnostic scripts (contain host credentials; never commit)
+tools/deploy_*
+tools/diag_*
+tools/verify_*
+tools/probe_*
+tools/inspect_*
+tools/activate_*
+tools/grant_*
+tools/migrate_config_*
+tools/preflight_*
+tools/who_*
+tools/find_tab_*
+tools/patch_*
+tools/render_*
+tools/restore_*
+tools/check45_*
+tools/make_rotation_*
+tools/compile_mo_*
